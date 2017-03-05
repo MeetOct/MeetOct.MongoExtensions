@@ -1,16 +1,15 @@
 {
-  "version": "1.0.0-*",
-
   "dependencies": {
+    "Microsoft.CSharp": "4.3.0",
     "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.0",
-    "NETStandard.Library": "1.6.0",
+    "MongoDB.Driver": "2.4.2",
     "MongoDB.Driver.Core": "2.4.2",
-    "MongoDB.Driver": "2.4.2"
+    "NETStandard.Library": "1.6.1"
   },
-
   "frameworks": {
     "netstandard1.6": {
       "imports": "dnxcore50"
     }
-  }
+  },
+  "version": "1.0.0-*"
 }

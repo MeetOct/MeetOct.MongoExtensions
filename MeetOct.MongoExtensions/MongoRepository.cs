@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace MeetOct.MongoExtensions
 {
 	public class MongoRepository<Entity> : IMongoRepository<Entity> where Entity : MongoEntity
 	{
 		private IMongoCollection<Entity> mongoCollection;
-		public MongoRepository(MongoClient client)
+		public MongoRepository(IMongoClient client)
 		{
 			var typeInfo = typeof(Entity).GetTypeInfo();
 			var targetType = typeof(MongoAttribute);
