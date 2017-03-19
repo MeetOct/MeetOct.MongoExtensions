@@ -1,0 +1,7 @@
+E:\gayhub\package.api\MeetOct.MongoExtensions\MeetOct.MongoExtensions\bin\Debug\netstandard1.6\MeetOct.MongoExtensions.deps.json
+E:\gayhub\package.api\MeetOct.MongoExtensions\MeetOct.MongoExtensions\bin\Debug\netstandard1.6\MeetOct.MongoExtensions.dll
+E:\gayhub\package.api\MeetOct.MongoExtensions\MeetOct.MongoExtensions\bin\Debug\netstandard1.6\MeetOct.MongoExtensions.pdb
+E:\gayhub\package.api\MeetOct.MongoExtensions\MeetOct.MongoExtensions\obj\Debug\netstandard1.6\MeetOct.MongoExtensions.AssemblyInfo.cs
+E:\gayhub\package.api\MeetOct.MongoExtensions\MeetOct.MongoExtensions\obj\Debug\netstandard1.6\MeetOct.MongoExtensions.dll
+E:\gayhub\package.api\MeetOct.MongoExtensions\MeetOct.MongoExtensions\obj\Debug\netstandard1.6\MeetOct.MongoExtensions.pdb
+E:\gayhub\package.api\MeetOct.MongoExtensions\MeetOct.MongoExtensions\obj\Debug\netstandard1.6\MeetOct.MongoExtensions.csprojResolveAssemblyReference.cache

@@ -9,5 +9,6 @@ namespace MeetOct.MongoExtensions
     public class MongoEntity
     {
 		public ObjectId Id { get; set; }
-	}
+
+    }
 }

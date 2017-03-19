@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace MeetOct.MongoExtensions
 {
@@ -23,29 +24,53 @@ namespace MeetOct.MongoExtensions
 			mongoCollection = database.GetCollection<Entity>(attr.Collection);
 		}
 
-		public void InsertOne(Entity entity)
+		public async Task InsertOneAsync(Entity entity)
 		{
-			mongoCollection.InsertOne(entity);
+			await mongoCollection.InsertOneAsync(entity);
 		}
 
-		public void InsertList(List<Entity> entity)
+		public async Task InsertListAsync(List<Entity> entity)
 		{
-			mongoCollection.InsertMany(entity);
+			await mongoCollection.InsertManyAsync(entity);
 		}
 
-		public long DeleteOne(Expression<Func<Entity, bool>> where)
-		{
-			var filter = Builders<Entity>.Filter.Where(where);
-			return mongoCollection.DeleteOne(filter).DeletedCount;
-		}
-
-		public long DeleteList(Expression<Func<Entity, bool>> where)
+		public async Task<long> DeleteOneAsync(Expression<Func<Entity, bool>> where)
 		{
 			var filter = Builders<Entity>.Filter.Where(where);
-			return mongoCollection.DeleteMany(filter).DeletedCount;
+			return (await mongoCollection.DeleteOneAsync(filter)).DeletedCount;
 		}
 
-		public void UpdateOne(Expression<Func<Entity, bool>> where, Dictionary<string, dynamic> update)
+		public async Task<long> DeleteListAsync(Expression<Func<Entity, bool>> where)
+		{
+			var filter = Builders<Entity>.Filter.Where(where);
+			return (await mongoCollection.DeleteManyAsync(filter)).DeletedCount;
+		}
+
+        public async Task UpdateOneAsync(Expression<Func<Entity, bool>> where, Dictionary<string, dynamic> update)
+        {
+            var filter = Builders<Entity>.Filter.Where(where);
+            var builder = Builders<Entity>.Update;
+            List<UpdateDefinition<Entity>> updates = new List<UpdateDefinition<Entity>>();
+            foreach (var item in update)
+            {
+                updates.Add(builder.Set(item.Key, item.Value));
+            }
+            await mongoCollection.UpdateOneAsync(filter, Builders<Entity>.Update.Combine(updates));
+        }
+
+        public async Task<Entity> FindOneAndUpdateAsync(Expression<Func<Entity, bool>> where, Dictionary<string, dynamic> update)
+        {
+            var filter = Builders<Entity>.Filter.Where(where);
+            var builder = Builders<Entity>.Update;
+            List<UpdateDefinition<Entity>> updates = new List<UpdateDefinition<Entity>>();
+            foreach (var item in update)
+            {
+                updates.Add(builder.Set(item.Key, item.Value));
+            }
+           return await mongoCollection.FindOneAndUpdateAsync(filter, Builders<Entity>.Update.Combine(updates));
+        }
+
+        public async Task UpdateListAsync(Expression<Func<Entity, bool>> where, Dictionary<string, dynamic> update)
 		{
 			var filter = Builders<Entity>.Filter.Where(where);
 			var builder = Builders<Entity>.Update;
@@ -54,35 +79,23 @@ namespace MeetOct.MongoExtensions
 			{
 				updates.Add(builder.Set(item.Key, item.Value));
 			}
-			mongoCollection.UpdateOne(filter, Builders<Entity>.Update.Combine(updates));
-		}
-
-		public void UpdateList(Expression<Func<Entity, bool>> where, Dictionary<string, dynamic> update)
-		{
-			var filter = Builders<Entity>.Filter.Where(where);
-			var builder = Builders<Entity>.Update;
-			List<UpdateDefinition<Entity>> updates = new List<UpdateDefinition<Entity>>();
-			foreach (var item in update)
-			{
-				updates.Add(builder.Set(item.Key, item.Value));
-			}
-			mongoCollection.UpdateMany(filter, Builders<Entity>.Update.Combine(updates));
+			await mongoCollection.UpdateManyAsync(filter, Builders<Entity>.Update.Combine(updates));
 		}
 
 
-		public Entity FindFirstOne(Expression<Func<Entity, bool>> where)
+		public async Task<Entity> FindFirstOneAsync(Expression<Func<Entity, bool>> where)
 		{
-			return mongoCollection.Find(Builders<Entity>.Filter.Where(where)).FirstOrDefault();
+			return (await mongoCollection.FindAsync(Builders<Entity>.Filter.Where(where)))?.FirstOrDefault();
 		}
 
-		public List<Entity> FindList(Expression<Func<Entity, bool>> where)
+		public async Task<List<Entity>> FindListAsync(Expression<Func<Entity, bool>> where)
 		{
-			return mongoCollection.Find(Builders<Entity>.Filter.Where(where)).ToList();
+			return (await mongoCollection.FindAsync(Builders<Entity>.Filter.Where(where)))?.ToList();
 		}
 
-		public List<Entity> PageList(int index, int size, Expression<Func<Entity, bool>> where)
+		public async Task<List<Entity>> PageListAsync(int index, int size, Expression<Func<Entity, bool>> where)
 		{
-			return PageList(index, size, where, null);
+			return await PageListAsync(index, size, where, null);
 		}
 
 		/// <summary>
@@ -93,7 +106,7 @@ namespace MeetOct.MongoExtensions
 		/// <param name="where"></param>
 		/// <param name="sort">排序方式，key代表排序字段，value 代表是否asc</param>
 		/// <returns></returns>
-		public List<Entity> PageList(int index, int size, Expression<Func<Entity, bool>> where, Dictionary<string, bool> sort = null)
+		public async Task<List<Entity>> PageListAsync(int index, int size, Expression<Func<Entity, bool>> where, Dictionary<string, bool> sort = null)
 		{
 			var filter = Builders<Entity>.Filter.Where(where);
 			if (sort == null || !sort.Any())
@@ -113,7 +126,7 @@ namespace MeetOct.MongoExtensions
 					sorts.Add(builder.Descending(item.Key));
 				}
 			}
-			return mongoCollection.Find(filter).Sort(Builders<Entity>.Sort.Combine(sorts)).Skip((index - 1) * size).Limit(size).ToList();
+			return await mongoCollection.Find(filter).Sort(Builders<Entity>.Sort.Combine(sorts)).Skip((index - 1) * size).Limit(size)?.ToListAsync();
 		}
 	}
 }
